@@ -1,0 +1,5 @@
+#define SECRET_SSID "your_wifi_name"
+#define SECRET_PASS "your_wifi_password"
+#define SECRET_MQTT_SERVER "your.mqtt.server.com"
+#define SECRET_MQTTUSER "your_mqtt_user"
+#define SECRET_MQTTPASS "your_mqtt_pasword"
