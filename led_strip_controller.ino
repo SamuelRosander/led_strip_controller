@@ -36,6 +36,7 @@ int ledEffectChaseWidth = 20; //the length of the tail in the chase effect
 int ledEffectBreatheFrames = 120; //the total number of frames for one whole cycle of the breathe effect
 int currentFrame = 0; //rolling number. Used by the effect breathe
 String ledEffect = "static";
+int currentFrame = 0; //rolling number. Used by the effects breathe and strobe
 
 
 void setup() {
@@ -180,6 +181,12 @@ void updateLEDs() {
   else if (ledEffect == "breatheFade") {
     ledEffectBreatheFade();
   }
+  else if (ledEffect == "strobe") {
+    ledEffectStrobe();
+  }
+  else if (ledEffect == "strobeFade") {
+    ledEffectStrobeFade();
+  }
 
   strip.show();
 }
@@ -316,6 +323,37 @@ void ledEffectBreatheFade() {
     }
   }
   currentFrame = (currentFrame + 1) % ledEffectBreatheFrames;
+  ledColorWheel = (ledColorWheel + 1) % 256;
+}
+
+
+void ledEffectStrobe() {
+  if (currentFrame % 2 == 0) {
+    for (int i=0; i<PIXEL_COUNT; i++) {
+      strip.setPixelColor(i, ledColor);
+    }
+  }
+  else {
+    for (int i=0; i<PIXEL_COUNT; i++) {
+      strip.setPixelColor(i, strip.Color(0,0,0));
+    }
+  }
+  currentFrame = (currentFrame + 1) % 2;
+}
+
+
+void ledEffectStrobeFade() {
+  if (currentFrame % 2 == 0) {
+    for (int i=0; i<PIXEL_COUNT; i++) {
+      strip.setPixelColor(i, Wheel(ledColorWheel, 255));
+    }
+  }
+  else {
+    for (int i=0; i<PIXEL_COUNT; i++) {
+      strip.setPixelColor(i, strip.Color(0,0,0));
+    }
+  }
+  currentFrame = (currentFrame + 1) % 2;
   ledColorWheel = (ledColorWheel + 1) % 256;
 }
 
