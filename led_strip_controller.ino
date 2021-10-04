@@ -1,4 +1,4 @@
-#include "arduino_secrets.h"
+#include "config.h"
 #include <WiFiNINA.h>
 #include <Adafruit_NeoPixel.h>
 #include <MQTT.h>
@@ -6,10 +6,16 @@
 #include <avr/power.h>
 #endif
 
-#define PIN 6
-#define PIXEL_COUNT 338
-
-String stripName = "hallway-ledstrip";
+//config
+String stripName = STRIPNAME;
+char mqttClientID[] = STRIPNAME;
+int ledDelay = conf_ledDelay; //delay between each frame
+int ledMiddleOffset = conf_ledMiddleOffset; //used by the scene chaseMiddle to offset the middle of the strip
+int ledOffsetWidth = conf_ledOffsetWidth; //the length of one "block" in the chase effect
+int ledColorOffsetWidth = conf_ledColorOffsetWidth; //the length of one full color spectrum
+int ledColorOffsetSpeed = conf_ledColorOffsetSpeed; //the number of steps the color will change each frame. Higher number = faster movement
+int ledEffectChaseWidth = conf_ledEffectChaseWidth; //the length of the tail in the chase effect
+int ledEffectBreatheFrames = conf_ledEffectBreatheFrames; //the total number of frames for one whole cycle of the breathe effect
 
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
@@ -25,18 +31,10 @@ int ledColorG = 0; //0-255
 int ledColorB = 0; //0-255
 int ledColorW = 255; //0-255
 int ledBrightness = 255; //0-255
-int ledDelay = 30; //delay between each frame
-int ledMiddleOffset = 70; //used by the scene chaseMiddle to offset the middle of the strip
-int ledOffset = 0; //rolling number to offset all pixels and "move" the effects
-int ledOffsetWidth = 26; //the length of one "block" in the chase effect
+int ledOffset = 10; //rolling number to offset all pixels and "move" the effects
 int ledColorOffset = 0; //rolling number between 0-255 to offset the colors in the rainbow effects to "move" it
-int ledColorOffsetWidth = PIXEL_COUNT; //the length of one full color spectrum
-int ledColorOffsetSpeed = 5; //the number of steps the color will change each frame. Higher number = faster movement
-int ledEffectChaseWidth = 20; //the length of the tail in the chase effect
-int ledEffectBreatheFrames = 120; //the total number of frames for one whole cycle of the breathe effect
-int currentFrame = 0; //rolling number. Used by the effect breathe
-String ledEffect = "static";
 int currentFrame = 0; //rolling number. Used by the effects breathe and strobe
+String ledEffect = "static";
 
 
 void setup() {
@@ -82,7 +80,7 @@ void connect() {
     delay(1000);
   }
 
-  while (!client.connect("hallway-ledstrip", SECRET_MQTTUSER, SECRET_MQTTPASS)) {
+  while (!client.connect(mqttClientID, SECRET_MQTTUSER, SECRET_MQTTPASS)) {
     delay(1000);
   }
 
